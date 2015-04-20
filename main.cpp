@@ -41,40 +41,6 @@ int main()
 	system("pause");
 }
 
-void swapRows(float* matrix, int rowLength, int firstRow, int secondRow)
-{
-	int firstIndex = rowLength * firstRow;
-	int secondIndex = rowLength * secondRow;
-
-	for (int i = 0; i < rowLength; ++i, ++firstIndex, ++secondIndex)
-	{
-		float temp = matrix[firstIndex];
-		matrix[firstIndex] = matrix[secondIndex];
-		matrix[secondIndex] = temp;
-	}
-}
-
-void multiplyRow(float* matrix, int rowLength, int row, float multiplier)
-{
-	int index = rowLength * row;
-
-	for (int i = 0; i < rowLength; ++i, ++index)
-	{
-		matrix[index] *= multiplier;
-	}
-}
-
-void addRows(float* matrix, int rowLength, int targetRow, int sourceRow)
-{
-	int targetIndex = rowLength * targetRow;
-	int sourceIndex = rowLength * targetRow;
-
-	for (int i = 0; i < rowLength; ++i, ++targetIndex, ++sourceIndex)
-	{
-		matrix[targetIndex] += matrix[sourceIndex];
-	}
-}
-
 void generateLinearEquationSystem(float** matrix, int rowsCount, int columnsCount)
 {
 	int maxValue = 42;
