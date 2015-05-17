@@ -15,7 +15,7 @@ LinearEquationSystemSolver solver;
 LinearEquationSystemSolutionChecker checker;
 
 int n = 32;
-const int nLimit = 4096;
+const int nLimit = 2048;
 const int multiplier = 2;
 const int repeatsNumber = 1;
 
@@ -39,16 +39,15 @@ int main()
 				minTime = elapsedSeconds;
 			}
 
+			bool correct = checker.IsCorrectSolution(s, solution);
+			printf("Solved: %s\n", correct ? "true" : "false");
+
 			delete s;
 			delete[] solution;
 		}
 
 		printf("N = %d, Elapsed seconds: %f\n", n, minTime);
-
 	}
-
-	//bool correct = checker.IsCorrectSolution(s, solution);
-	//printf("Solved: %s\n", correct ? "true" : "false");
-
+		
 	system("pause");
 }
