@@ -78,10 +78,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LinearEquationSystem.cpp" />
+    <ClCompile Include="LinearEquationSystemFactory.cpp" />
+    <ClCompile Include="LinearEquationSystemSolver.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="LinearEquationSystemSolutionChecker.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LinearEquationSystem.h" />
+    <ClInclude Include="LinearEquationSystemFactory.h" />
+    <ClInclude Include="LinearEquationSystemSolutionChecker.h" />
+    <ClInclude Include="LinearEquationSystemSolver.h" />
     <ClInclude Include="Stopwatch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
