@@ -3,19 +3,19 @@
 LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 {
 	int maxValue = 42;
-	float divider = 3.33f;
+	NUMBER divider = 3.33f;
 
 	LinearEquationSystem* system = new LinearEquationSystem(n);
-	float** matrix = system->AugmentedMatrix;
+	NUMBER** matrix = system->AugmentedMatrix;
 
 	for (int row = 0; row < system->RowsCount; ++row)
 	{
-		float freeTerm = 0;
+		NUMBER freeTerm = 0;
 
 		int column = 0;
 		for (; column < system->ColumnsCount - 1; ++column)
 		{
-			float value = (rand() % maxValue - (maxValue / 2)) / divider;
+			NUMBER value = (rand() % maxValue - (maxValue / 2)) / divider;
 
 			matrix[row][column] = value;
 			freeTerm += value * column;

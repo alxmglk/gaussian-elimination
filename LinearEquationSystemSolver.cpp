@@ -1,6 +1,6 @@
 #include "LinearEquationSystemSolver.h"
 
-void LinearEquationSystemSolver::Solve(LinearEquationSystem* system, float* solution)
+void LinearEquationSystemSolver::Solve(LinearEquationSystem* system, NUMBER* solution)
 {
 	ConvertToTriangularForm(system);
 	Backsolve(system, solution);
@@ -8,11 +8,11 @@ void LinearEquationSystemSolver::Solve(LinearEquationSystem* system, float* solu
 
 void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* system)
 {
-	float precision = 0.000000001f;
+	NUMBER precision = 0.000000001f;
 
 	int rowsCount = system->RowsCount;
 	int columnsCount = system->ColumnsCount;
-	float** matrix = system->AugmentedMatrix;
+	NUMBER** matrix = system->AugmentedMatrix;
 
 	for (int row = 0; row < rowsCount - 1; ++row)
 	{
@@ -26,7 +26,7 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 				{
 					for (int j = 0; j < rowsCount; ++j)
 					{
-						float temp = matrix[row][j];
+						NUMBER temp = matrix[row][j];
 						matrix[row][j] = matrix[i][j];
 						matrix[i][j] = temp;
 					}
@@ -38,7 +38,7 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 
 		for (int i = row + 1; i < rowsCount; ++i)
 		{
-			float multiplier = -(matrix[i][column] / matrix[row][column]);
+			NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
 
 			for (int j = 0; j < columnsCount; ++j)
 			{
@@ -48,18 +48,18 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 	}
 }
 
-void LinearEquationSystemSolver::Backsolve(LinearEquationSystem* system, float* solution)
+void LinearEquationSystemSolver::Backsolve(LinearEquationSystem* system, NUMBER* solution)
 {
 	int lastRowIndex = system->RowsCount - 1;
 	int freeTermIndex = system->FreeTermIndex;
-	float** matrix = system->AugmentedMatrix;
+	NUMBER** matrix = system->AugmentedMatrix;
 
 	int rowIndex = lastRowIndex;
-	float* row = matrix[lastRowIndex];
+	NUMBER* row = matrix[lastRowIndex];
 
 	for (; rowIndex >= 0; --rowIndex, row = matrix[rowIndex])
 	{
-		float freeTerm = row[freeTermIndex];
+		NUMBER freeTerm = row[freeTermIndex];
 		int columnIndex = lastRowIndex;
 
 		for (; columnIndex > rowIndex; --columnIndex)

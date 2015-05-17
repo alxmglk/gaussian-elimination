@@ -6,11 +6,11 @@ LinearEquationSystem::LinearEquationSystem(int n)
 	RowsCount = n;
 	ColumnsCount = n + 1;
 	FreeTermIndex = n;
-	AugmentedMatrix = (float**)malloc(RowsCount * sizeof(float*));
+	AugmentedMatrix = (NUMBER**)malloc(RowsCount * sizeof(NUMBER*));
 
 	for (int row = 0; row < RowsCount; ++row)
 	{
-		AugmentedMatrix[row] = (float*)malloc(ColumnsCount * sizeof(float));
+		AugmentedMatrix[row] = (NUMBER*)malloc(ColumnsCount * sizeof(NUMBER));
 	}
 }
 

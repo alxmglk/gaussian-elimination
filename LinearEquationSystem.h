@@ -1,10 +1,11 @@
 #pragma once
 #include <stdlib.h>
+#include "Common.h"
 
 class LinearEquationSystem
 {
 public:
-	float** AugmentedMatrix;
+	NUMBER** AugmentedMatrix;
 	int N;
 	int RowsCount;
 	int ColumnsCount;

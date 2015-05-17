@@ -27,7 +27,7 @@ int main()
 		for (int i = 0; i < repeatsNumber; ++i)
 		{
 			LinearEquationSystem* s = factory.Create(n);
-			float* solution = new float[n];
+			NUMBER* solution = new NUMBER[n];
 
 			stopwatch.Start();
 			solver.Solve(s, solution);

@@ -86,6 +86,7 @@
     <ClCompile Include="Stopwatch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common.h" />
     <ClInclude Include="LinearEquationSystem.h" />
     <ClInclude Include="LinearEquationSystemFactory.h" />
     <ClInclude Include="LinearEquationSystemSolutionChecker.h" />
