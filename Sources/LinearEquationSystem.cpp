@@ -10,7 +10,7 @@ LinearEquationSystem::LinearEquationSystem(int n)
 
 	for (int row = 0; row < RowsCount; ++row)
 	{
-		AugmentedMatrix[row] = (NUMBER*)malloc(ColumnsCount * sizeof(NUMBER));
+		AugmentedMatrix[row] = (NUMBER*)_aligned_malloc(ColumnsCount * sizeof(NUMBER), 16);
 	}
 }
 
@@ -18,7 +18,7 @@ LinearEquationSystem::~LinearEquationSystem()
 {
 	for (int row = 0; row < RowsCount; ++row)
 	{
-		free(AugmentedMatrix[row]);
+		_aligned_free(AugmentedMatrix[row]);
 	}
 
 	free(AugmentedMatrix);

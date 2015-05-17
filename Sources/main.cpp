@@ -5,11 +5,13 @@
 #include <float.h>
 
 #include "Stopwatch.h"
+#include "SIMDExtensionsChecker.h"
 #include "LinearEquationSystemFactory.h"
 #include "LinearEquationSystemSolver.h"
 #include "LinearEquationSystemSolutionChecker.h"
 
 Stopwatch stopwatch;
+SIMDExtensionsChecker simdExtensionsChecker;
 LinearEquationSystemFactory factory;
 LinearEquationSystemSolver solver;
 LinearEquationSystemSolutionChecker checker;
@@ -21,7 +23,9 @@ const int repeatsNumber = 1;
 
 int main()
 {
-		for (; n <= nLimit; n *= multiplier)
+	simdExtensionsChecker.PrintSupportedExtensions();
+
+	for (; n <= nLimit; n *= multiplier)
 	{
 		float minTime = FLT_MAX;
 		for (int i = 0; i < repeatsNumber; ++i)
@@ -48,6 +52,6 @@ int main()
 
 		printf("N = %d, Elapsed seconds: %f\n", n, minTime);
 	}
-		
+
 	system("pause");
 }
