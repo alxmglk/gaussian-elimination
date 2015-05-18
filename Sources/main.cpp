@@ -19,7 +19,7 @@ LinearEquationSystemSolutionChecker checker;
 int n = 32;
 const int nLimit = 2048;
 const int multiplier = 2;
-const int repeatsNumber = 1;
+const int repeatsNumber = 5;
 
 int main()
 {
@@ -32,7 +32,7 @@ int main()
 		{
 			LinearEquationSystem* s = factory.Create(n);
 			NUMBER* solution = new NUMBER[n];
-
+			 
 			stopwatch.Start();
 			solver.Solve(s, solution);
 			stopwatch.Stop();
@@ -43,8 +43,8 @@ int main()
 				minTime = elapsedSeconds;
 			}
 
-			bool correct = checker.IsCorrectSolution(s, solution);
-			printf("Solved: %s\n", correct ? "true" : "false");
+			/*bool correct = checker.IsCorrectSolution(s, solution);
+			printf("Solved: %s\n", correct ? "true" : "false");*/
 
 			delete s;
 			delete[] solution;
