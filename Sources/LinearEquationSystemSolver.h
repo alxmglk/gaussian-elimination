@@ -2,6 +2,7 @@
 #include "Common.h"
 #include "LinearEquationSystem.h"
 #include <math.h>
+#include <intrin.h>
 
 class LinearEquationSystemSolver
 {
