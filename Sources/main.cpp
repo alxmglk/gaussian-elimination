@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <intrin.h>
 #include <float.h>
+#include "mpi.h"
 
 #include "Stopwatch.h"
 #include "SIMDExtensionsChecker.h"
@@ -21,8 +22,13 @@ const int nLimit = 2048;
 const int multiplier = 2;
 const int repeatsNumber = 5;
 
-int main()
+int main(int argc, char* argv[])
 {
+	MPI_Init(&argc, &argv);
+
+	int rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
 	simdExtensionsChecker.PrintSupportedExtensions();
 
 	for (; n <= nLimit; n *= multiplier)
@@ -52,6 +58,8 @@ int main()
 
 		printf("N = %d, Elapsed seconds: %f\n", n, minTime);
 	}
+
+	MPI_Finalize();
 
 	system("pause");
 }
