@@ -40,7 +40,7 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 
 		PARRAY* mainRow = (PARRAY*)matrix[row];
 
-		#pragma omp parallel if (rowsCount - row > 128) 
+		#pragma omp parallel num_threads(8) if (rowsCount - row > 128) 
 		{
 			#pragma omp for nowait
 			for (int i = row + 1; i < rowsCount; ++i)
