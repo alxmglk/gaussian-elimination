@@ -3,6 +3,7 @@
 #include "LinearEquationSystem.h"
 #include <math.h>
 #include <intrin.h>
+#include <omp.h>
 
 class LinearEquationSystemSolver
 {

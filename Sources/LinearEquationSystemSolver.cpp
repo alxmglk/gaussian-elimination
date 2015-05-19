@@ -36,24 +36,28 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 			}
 		}
 
-		for (int i = row + 1; i < rowsCount; ++i)
+		#pragma omp parallel if (rowsCount - row > 128) 
 		{
-			NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
-			
-			// BEGIN: SSE
-			PARRAY* mainRow = (PARRAY*)matrix[row];
-			PARRAY* currentRow = (PARRAY*)matrix[i];
-			PARRAY m = SET1(multiplier);
-			
-			for (int j = 0; j < columnsCount / K; ++j)
+			#pragma omp for nowait
+			for (int i = row + 1; i < rowsCount; ++i)
 			{
-				currentRow[j] = ADD(currentRow[j], MUL(mainRow[j], m));				
-			}
-			// END: SSE
+				NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
 
-			for (int j = columnsCount - columnsCount % K; j < columnsCount; ++j)
-			{
-				matrix[i][j] += matrix[row][j] * multiplier;
+				// BEGIN: SSE
+				PARRAY* mainRow = (PARRAY*)matrix[row];
+				PARRAY* currentRow = (PARRAY*)matrix[i];
+				PARRAY m = SET1(multiplier);
+
+				for (int j = 0; j < columnsCount / K; ++j)
+				{
+					currentRow[j] = ADD(currentRow[j], MUL(mainRow[j], m));
+				}
+				// END: SSE
+
+				for (int j = columnsCount - columnsCount % K; j < columnsCount; ++j)
+				{
+					matrix[i][j] += matrix[row][j] * multiplier;
+				}
 			}
 		}
 	}
