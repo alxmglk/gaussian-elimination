@@ -12,7 +12,9 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 
 	int rowsCount = system->RowsCount;
 	int columnsCount = system->ColumnsCount;
-	NUMBER** matrix = system->AugmentedMatrix;
+	int packedElementsNumber = columnsCount / K;
+	int firstUnpackedElementIndex = columnsCount - columnsCount % K;
+	NUMBER** matrix = system->AugmentedMatrix;	
 
 	for (int row = 0; row < rowsCount - 1; ++row)
 	{
@@ -36,22 +38,23 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 			}
 		}
 
+		PARRAY* mainRow = (PARRAY*)matrix[row];
+
 		for (int i = row + 1; i < rowsCount; ++i)
 		{
 			NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
 			
 			// BEGIN: SSE
-			PARRAY* mainRow = (PARRAY*)matrix[row];
 			PARRAY* currentRow = (PARRAY*)matrix[i];
 			PARRAY m = SET1(multiplier);
 			
-			for (int j = 0; j < columnsCount / K; ++j)
+			for (int j = 0; j < packedElementsNumber; ++j)
 			{
 				currentRow[j] = ADD(currentRow[j], MUL(mainRow[j], m));				
 			}
 			// END: SSE
 
-			for (int j = columnsCount - columnsCount % K; j < columnsCount; ++j)
+			for (int j = firstUnpackedElementIndex; j < columnsCount; ++j)
 			{
 				matrix[i][j] += matrix[row][j] * multiplier;
 			}
