@@ -8,6 +8,8 @@ LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 	LinearEquationSystem* system = new LinearEquationSystem(n);
 	NUMBER** matrix = system->AugmentedMatrix;
 
+	srand(time(NULL));
+
 	for (int row = 0; row < system->RowsCount; ++row)
 	{
 		NUMBER freeTerm = 0;
