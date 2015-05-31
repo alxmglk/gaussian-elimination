@@ -1,9 +1,14 @@
 #include "LinearEquationSystem.h"
 
-LinearEquationSystem::LinearEquationSystem(int n)
+LinearEquationSystem::LinearEquationSystem(int n) : LinearEquationSystem(n, n)
+{
+
+}
+
+LinearEquationSystem::LinearEquationSystem(int n, int rowsCount)
 {
 	N = n;
-	RowsCount = n;
+	RowsCount = rowsCount;
 	ColumnsCount = n + 1;
 	FreeTermIndex = n;
 	AugmentedMatrix = (NUMBER**)malloc(RowsCount * sizeof(NUMBER*));
