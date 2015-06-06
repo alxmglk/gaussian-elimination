@@ -6,6 +6,11 @@ MPICommunicator::MPICommunicator(MPIContext* mpiContext, MPI_Comm communicatorId
 	id = communicatorId;
 }
 
+void MPICommunicator::Barrier()
+{
+	MPI_Barrier(id);
+}
+
 void MPICommunicator::Scatter(const void* sendBuffer, int sendCount, void* recvBuffer, MPI_Datatype sendType)
 {
 	MPI_Scatter(sendBuffer, sendCount, sendType, recvBuffer, sendCount, sendType, context->MasterProcessRank, id);
