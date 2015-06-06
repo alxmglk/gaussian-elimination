@@ -1,46 +1,40 @@
 #include <stdio.h>
-#include <math.h>
 #include <windows.h>
-#include <intrin.h>
 #include <float.h>
 #include "mpi.h"
 
 #include "Stopwatch.h"
-#include "SIMDExtensionsChecker.h"
-#include "LinearEquationSystemFactory.h"
 #include "LinearEquationSystemSolver.h"
 #include "LinearEquationSystemSolutionChecker.h"
+#include "MPIContext.h"
+#include "MPICommunicator.h"
+#include "LinearEquationSystemFactory.h"
 
 Stopwatch stopwatch;
-SIMDExtensionsChecker simdExtensionsChecker;
-LinearEquationSystemFactory factory;
-LinearEquationSystemSolver solver;
 LinearEquationSystemSolutionChecker checker;
 
-int n = 32;
-const int nLimit = 2048;
+int n = 128;
+const int nLimit = 128;
 const int multiplier = 2;
-const int repeatsNumber = 5;
+const int repeatsNumber = 1;
 
 int main(int argc, char* argv[])
 {
-	MPI_Init(&argc, &argv);
-
-	int rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-	simdExtensionsChecker.PrintSupportedExtensions();
+	MPIContext context(&argc, &argv);
+	MPICommunicator communicator(context, MPI_COMM_WORLD);
+	LinearEquationSystemFactory factory(context, communicator);
+	LinearEquationSystemSolver solver(context, communicator);
 
 	for (; n <= nLimit; n *= multiplier)
 	{
 		float minTime = FLT_MAX;
-		for (int i = 0; i < repeatsNumber; ++i)
+		for (int attempt = 0; attempt < repeatsNumber; ++attempt)
 		{
-			LinearEquationSystem* s = factory.Create(n);
+			LinearEquationSystem* partialSystem = factory.Create(n);
 			NUMBER* solution = new NUMBER[n];
-			 
-			stopwatch.Start();
-			solver.Solve(s, solution);
+
+			stopwatch.Start();			
+			solver.Solve(partialSystem, solution);
 			stopwatch.Stop();
 
 			float elapsedSeconds = stopwatch.GetElapsedSeconds();
@@ -49,17 +43,14 @@ int main(int argc, char* argv[])
 				minTime = elapsedSeconds;
 			}
 
-			/*bool correct = checker.IsCorrectSolution(s, solution);
-			printf("Solved: %s\n", correct ? "true" : "false");*/
+			communicator.Barrier();
+			
+			//print(partialSystem);
 
-			delete s;
-			delete[] solution;
+			delete partialSystem;
+			delete solution;
 		}
 
 		printf("N = %d, Elapsed seconds: %f\n", n, minTime);
 	}
-
-	MPI_Finalize();
-
-	system("pause");
 }
