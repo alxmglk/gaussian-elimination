@@ -1,9 +1,5 @@
 #include "LinearEquationSystemFactory.h"
 
-LinearEquationSystemFactory::~LinearEquationSystemFactory()
-{
-}
-
 LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 {
 	int maxValue = 42;

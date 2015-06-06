@@ -2,17 +2,16 @@
 #include "LinearEquationSystemFactory.h"
 #include "MPIContext.h"
 #include "MPICommunicator.h"
-#include "MPIRowType.h"
+#include "MPILinearEquationSystem.h"
 
-class MPILinearEquationSystemFactory : public LinearEquationSystemFactory
+class MPILinearEquationSystemFactory
 {
-	MPIRowType* rowType;
+	LinearEquationSystemFactory* factory;
 	MPIContext* context;
 	MPICommunicator* communicator;
 
 public:
-	MPILinearEquationSystemFactory(MPIRowType* mpiRowType, MPIContext* mpiContext, MPICommunicator* mpiCommunicator);
-	virtual ~MPILinearEquationSystemFactory();
-
-	virtual LinearEquationSystem* Create(int n) override;
+	MPILinearEquationSystemFactory(LinearEquationSystemFactory* defaultFactory, MPIContext* mpiContext, MPICommunicator* mpiCommunicator);
+	
+    MPILinearEquationSystem* Create(int n);
 };

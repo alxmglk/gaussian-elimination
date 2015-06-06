@@ -1,32 +1,28 @@
 #include "MPILinearEquationSystemFactory.h"
 
-MPILinearEquationSystemFactory::MPILinearEquationSystemFactory(MPIRowType* mpiRowType, MPIContext* mpiContext, MPICommunicator* mpiCommunicator)
+MPILinearEquationSystemFactory::MPILinearEquationSystemFactory(LinearEquationSystemFactory* defaultFactory, MPIContext* mpiContext, MPICommunicator* mpiCommunicator)
 {
-	rowType = mpiRowType;
+	factory = defaultFactory;
 	context = mpiContext;
 	communicator = mpiCommunicator;
 }
 
-MPILinearEquationSystemFactory::~MPILinearEquationSystemFactory()
-{
-}
-
-LinearEquationSystem* MPILinearEquationSystemFactory::Create(int n)
+MPILinearEquationSystem* MPILinearEquationSystemFactory::Create(int n)
 {
 	int rowsPerProcess = n / context->NumberOfProcesses;
-	LinearEquationSystem* partialSystem = new LinearEquationSystem(n, rowsPerProcess);
+	MPILinearEquationSystem* partialSystem = new MPILinearEquationSystem(n, rowsPerProcess);
 	LinearEquationSystem* fullSystem;
 
 	if (context->IsMaster())
 	{
-		fullSystem = LinearEquationSystemFactory::Create(n);
+		fullSystem = factory->Create(n);
 	}
 	else
 	{
 		fullSystem = new LinearEquationSystem(n);
 	}
 
-	communicator->Scatter(fullSystem->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], rowType->Type);
+	communicator->Scatter(fullSystem->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], partialSystem->RowType->Type);
 
 	delete fullSystem;
 
