@@ -5,6 +5,9 @@
 
 class LinearEquationSystemFactory
 {
+protected:
+	~LinearEquationSystemFactory();
+
 public:
-	LinearEquationSystem* Create(int n);
+	virtual LinearEquationSystem* Create(int n);
 };

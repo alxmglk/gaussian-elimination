@@ -42,6 +42,9 @@
     <ClCompile Include="MPICommunicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MPILinearEquationSystemFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="MPIRowType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MPICommunicator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPILinearEquationSystemFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MPIRowType.h">

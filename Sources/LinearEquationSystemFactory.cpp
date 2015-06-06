@@ -1,5 +1,9 @@
 #include "LinearEquationSystemFactory.h"
 
+LinearEquationSystemFactory::~LinearEquationSystemFactory()
+{
+}
+
 LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 {
 	int maxValue = 42;
@@ -8,7 +12,7 @@ LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 	LinearEquationSystem* system = new LinearEquationSystem(n);
 	NUMBER** matrix = system->AugmentedMatrix;
 
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	for (int row = 0; row < system->RowsCount; ++row)
 	{
