@@ -1,23 +1,23 @@
 #include "LinearEquationSystemFactory.h"
 
-LinearEquationSystemFactory::LinearEquationSystemFactory(MPIContext* mpiContext, MPICommunicator* mpiCommunicator)
+LinearEquationSystemFactory::LinearEquationSystemFactory(MPIContext& mpiContext, MPICommunicator& mpiCommunicator)
+	: context(mpiContext), communicator(mpiCommunicator)
 {
-	context = mpiContext;
-	communicator = mpiCommunicator;
+	
 }
 
 LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 {
-	int rowsPerProcess = n / context->NumberOfProcesses;
+	int rowsPerProcess = n / context.NumberOfProcesses;
 	LinearEquationSystem* system = new LinearEquationSystem(n);;
 	LinearEquationSystem* partialSystem = new LinearEquationSystem(n, rowsPerProcess);	
 
-	if (context->IsMaster())
+	if (context.IsMaster())
 	{
 		Fill(system);
 	}
 
-	communicator->Scatter(system->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], partialSystem->RowType->Type);
+	communicator.Scatter(system->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], partialSystem->RowType->Type);
 
 	delete system;
 
