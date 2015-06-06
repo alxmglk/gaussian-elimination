@@ -5,10 +5,10 @@
 class MPICommunicator
 {
 	MPI_Comm id;
-	const MPIContext& context;
+	MPIContext* context;
 
 public:
-	MPICommunicator(const MPIContext& mpiContext, MPI_Comm communicatorId);
+	MPICommunicator(MPIContext* mpiContext, MPI_Comm communicatorId);
 
 	void Scatter(const void* sendBuffer, int sendCount, void* recvBuffer, MPI_Datatype sendType);
 	void Gather(const void* sendBuffer, int sendCount, void* recvBuffer, MPI_Datatype sendType);
