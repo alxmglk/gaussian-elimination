@@ -36,6 +36,9 @@
     <ClCompile Include="SIMDExtensionsChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MPIContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stopwatch.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SIMDExtensionsChecker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MPIContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

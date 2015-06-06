@@ -86,6 +86,7 @@
     <ClCompile Include="LinearEquationSystemSolver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="LinearEquationSystemSolutionChecker.cpp" />
+    <ClCompile Include="MPIContext.cpp" />
     <ClCompile Include="SIMDExtensionsChecker.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
   </ItemGroup>
@@ -95,6 +96,7 @@
     <ClInclude Include="LinearEquationSystemFactory.h" />
     <ClInclude Include="LinearEquationSystemSolutionChecker.h" />
     <ClInclude Include="LinearEquationSystemSolver.h" />
+    <ClInclude Include="MPIContext.h" />
     <ClInclude Include="SIMDExtensionsChecker.h" />
     <ClInclude Include="Stopwatch.h" />
   </ItemGroup>
