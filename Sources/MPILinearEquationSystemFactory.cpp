@@ -13,6 +13,8 @@ MPILinearEquationSystemFactory::~MPILinearEquationSystemFactory()
 
 LinearEquationSystem* MPILinearEquationSystemFactory::Create(int n)
 {
+	int rowsPerProcess = n / context->NumberOfProcesses;
+	LinearEquationSystem* partialSystem = new LinearEquationSystem(n, rowsPerProcess);
 	LinearEquationSystem* fullSystem;
 
 	if (context->IsMaster())
@@ -24,10 +26,9 @@ LinearEquationSystem* MPILinearEquationSystemFactory::Create(int n)
 		fullSystem = new LinearEquationSystem(n);
 	}
 
-	int rowsPerProcess = n / context->NumberOfProcesses;
-	LinearEquationSystem* partialSystem = new LinearEquationSystem(n, rowsPerProcess);
-
 	communicator->Scatter(fullSystem->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], rowType->Type);
+
+	delete fullSystem;
 
 	return partialSystem;
 }
