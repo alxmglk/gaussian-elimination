@@ -1,96 +1,33 @@
 #include "LinearEquationSystemSolver.h"
 
-LinearEquationSystemSolver::LinearEquationSystemSolver(MPIContext& mpiContext, MPICommunicator& mpiCommunicator) 
+LinearEquationSystemSolver::LinearEquationSystemSolver(MPIContext& mpiContext, MPICommunicator& mpiCommunicator)
 	: context(mpiContext), communicator(mpiCommunicator)
-{	
+{
 }
 
 void LinearEquationSystemSolver::Solve(LinearEquationSystem* system, NUMBER* solution)
 {
-	ConvertToTriangularForm(system);
+	LinearEquationSystemSolverContext solverContext(context, system);
+
+	ConvertToTriangularForm(solverContext);
 	Backsolve(system, solution);
 }
 
-void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* system)
+void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystemSolverContext& solverContext)
 {
-	int n = system->N;
-	MPI_Datatype rowType = system->RowType->Type;
+	LinearEquationSystem* system = solverContext.System;;
 	int rowsCount = system->RowsCount;
-	int columnsCount = system->ColumnsCount;
-
-	bool* processedRows = new bool[rowsCount];
-	for (int k = 0; k < rowsCount; ++k)
-	{
-		processedRows[k] = false;
-	}
-
-	NUMBER* multiplierRow = (NUMBER*)_aligned_malloc(system->RowType->Size, 16);
-	NUMBER* emptyRow = new NUMBER[columnsCount];
-
-	for (int column = 0; column < columnsCount; ++column)
-	{
-		emptyRow[column] = -FLT_MAX;
-	}
-
-	LinearEquationSystem* gatherBuffer = new LinearEquationSystem(n, context.NumberOfProcesses);
+	bool* processedRows = solverContext.ProcessedRows;
+	NUMBER* mainRow = solverContext.MainRow;
+	int packedElementsCount = system->RowType->ElementsCount / K;
 
 	NUMBER** matrix = system->AugmentedMatrix;
 
-	for (int i = 0; i < n - 1; ++i)
+	for (int i = 0; i < system->N - 1; ++i)
 	{
-#pragma region Find row with the largest coefficient
-		NUMBER* mainRow = emptyRow;
+		FindMainRow(solverContext, i);
 
-		int mainRowIndex = -1;
-
-		for (int row = 0; row < rowsCount; ++row)
-		{
-			if (processedRows[row])
-			{
-				continue;
-			}
-
-			if (mainRow[i] <= matrix[row][i])
-			{
-				mainRow = matrix[row];
-				mainRowIndex = row;
-			}
-		}
-
-		communicator.Gather(mainRow, 1, gatherBuffer->AugmentedMatrix[0], rowType);
-
-		int maxValueProc = 0;
-		if (context.IsMaster())
-		{
-			NUMBER maxValue = gatherBuffer->AugmentedMatrix[maxValueProc][i];
-
-			for (int proc = 1; proc < context.NumberOfProcesses; ++proc)
-			{
-				NUMBER value = gatherBuffer->AugmentedMatrix[proc][i];
-
-				if (value > maxValue)
-				{
-					maxValueProc = proc;
-					maxValue = value;
-				}
-			}
-
-			memcpy(multiplierRow, gatherBuffer->AugmentedMatrix[maxValueProc], columnsCount * sizeof(NUMBER));
-		}
-#pragma endregion
-
-		communicator.Broadcast(&maxValueProc, 1, MPI_INTEGER, context.MasterProcessRank);
-		if (maxValueProc == context.ProcessRank)
-		{
-			processedRows[mainRowIndex] = true;
-		}
-
-		communicator.Broadcast(multiplierRow, 1, rowType, context.MasterProcessRank);
-
-#pragma region Solve
-		int packedElementsNumber = columnsCount / K;
-
-		PARRAY* pMultiplierRow = (PARRAY*)multiplierRow;
+		PARRAY* pMainRow = (PARRAY*)mainRow;
 
 		for (int row = 0; row < rowsCount; ++row)
 		{
@@ -99,23 +36,74 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 				continue;
 			}
 
-			NUMBER multiplier = -(matrix[row][i] / multiplierRow[i]);
+			NUMBER multiplier = -(matrix[row][i] / mainRow[i]);
 
 			PARRAY* currentRow = (PARRAY*)matrix[row];
 			PARRAY m = SET1(multiplier);
 
-			for (int j = 0; j < packedElementsNumber; ++j)
+			for (int j = 0; j < packedElementsCount; ++j)
 			{
-				currentRow[j] = ADD(currentRow[j], MUL(pMultiplierRow[j], m));
+				currentRow[j] = ADD(currentRow[j], MUL(pMainRow[j], m));
 			}
 		}
-#pragma endregion
+	}
+}
+
+void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& solverContext, int index)
+{
+	NUMBER** matrix = solverContext.System->AugmentedMatrix;
+	int rowsCount = solverContext.System->RowsCount;
+	int columnsCount = solverContext.System->ColumnsCount;
+	MPI_Datatype rowType = solverContext.System->RowType->Type;
+	bool* processedRows = solverContext.ProcessedRows;
+	NUMBER** gatherBuffer = solverContext.GatherBuffer;
+	NUMBER* mainRow = solverContext.MainRow;
+
+	NUMBER* mainLocalRow = solverContext.DefaultMinimalRow;
+	int mainLocalRowIndex = -1;
+
+	for (int row = 0; row < rowsCount; ++row)
+	{
+		if (processedRows[row])
+		{
+			continue;
+		}
+
+		if (mainLocalRow[index] <= matrix[row][index])
+		{
+			mainLocalRow = matrix[row];
+			mainLocalRowIndex = row;
+		}
 	}
 
-	_aligned_free(multiplierRow);
-	delete[]processedRows;
-	delete[]emptyRow;
-	delete gatherBuffer;
+	communicator.Gather(mainLocalRow, 1, gatherBuffer[0], rowType);
+
+	int maxValueProc = 0;
+	if (context.IsMaster())
+	{
+		NUMBER maxValue = gatherBuffer[maxValueProc][index];
+
+		for (int proc = 1; proc < context.NumberOfProcesses; ++proc)
+		{
+			NUMBER value = gatherBuffer[proc][index];
+
+			if (value > maxValue)
+			{
+				maxValueProc = proc;
+				maxValue = value;
+			}
+		}
+
+		memcpy(mainRow, gatherBuffer[maxValueProc], columnsCount * sizeof(NUMBER));
+	}
+
+	communicator.Broadcast(&maxValueProc, 1, MPI_INTEGER, context.MasterProcessRank);
+	if (maxValueProc == context.ProcessRank)
+	{
+		processedRows[mainLocalRowIndex] = true;
+	}
+
+	communicator.Broadcast(mainRow, 1, rowType, context.MasterProcessRank);
 }
 
 void LinearEquationSystemSolver::Backsolve(LinearEquationSystem* system, NUMBER* solution)

@@ -45,6 +45,9 @@
     <ClCompile Include="LinearEquationSystemFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LinearEquationSystemSolverContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stopwatch.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LinearEquationSystemFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearEquationSystemSolverContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

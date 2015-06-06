@@ -1,6 +1,7 @@
 #pragma once
 #include "Common.h"
 #include "LinearEquationSystem.h"
+#include "LinearEquationSystemSolverContext.h"
 #include "MPIContext.h"
 #include "MPICommunicator.h"
 #include <math.h>
@@ -14,7 +15,8 @@ class LinearEquationSystemSolver
 	MPIContext& context;
 	MPICommunicator& communicator;
 
-	void ConvertToTriangularForm(LinearEquationSystem* system);
+	void ConvertToTriangularForm(LinearEquationSystemSolverContext& solverContext);
+	void FindMainRow(LinearEquationSystemSolverContext& solverContext, int index);
 	void Backsolve(LinearEquationSystem* system, NUMBER* solution);
 
 public:
