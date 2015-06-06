@@ -24,12 +24,6 @@
     <ClCompile Include="LinearEquationSystemSolutionChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinearEquationSystemFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LinearEquationSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LinearEquationSystemSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -42,13 +36,13 @@
     <ClCompile Include="MPICommunicator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MPILinearEquationSystemFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MPIRowType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MPILinearEquationSystem.cpp">
+    <ClCompile Include="LinearEquationSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinearEquationSystemFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -57,12 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LinearEquationSystemSolutionChecker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinearEquationSystem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LinearEquationSystemFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LinearEquationSystemSolver.h">
@@ -80,13 +68,13 @@
     <ClInclude Include="MPICommunicator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPILinearEquationSystemFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MPIRowType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MPILinearEquationSystem.h">
+    <ClInclude Include="LinearEquationSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearEquationSystemFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

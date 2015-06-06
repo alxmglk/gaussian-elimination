@@ -1,11 +1,33 @@
 #include "LinearEquationSystemFactory.h"
 
+LinearEquationSystemFactory::LinearEquationSystemFactory(MPIContext* mpiContext, MPICommunicator* mpiCommunicator)
+{
+	context = mpiContext;
+	communicator = mpiCommunicator;
+}
+
 LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
+{
+	int rowsPerProcess = n / context->NumberOfProcesses;
+	LinearEquationSystem* system = new LinearEquationSystem(n);;
+	LinearEquationSystem* partialSystem = new LinearEquationSystem(n, rowsPerProcess);	
+
+	if (context->IsMaster())
+	{
+		Fill(system);
+	}
+
+	communicator->Scatter(system->AugmentedMatrix[0], rowsPerProcess, partialSystem->AugmentedMatrix[0], partialSystem->RowType->Type);
+
+	delete system;
+
+	return partialSystem;
+}
+
+void LinearEquationSystemFactory::Fill(LinearEquationSystem* system)
 {
 	int maxValue = 42;
 	NUMBER divider = 3.33f;
-
-	LinearEquationSystem* system = new LinearEquationSystem(n);
 	NUMBER** matrix = system->AugmentedMatrix;
 
 	srand(time(nullptr));
@@ -25,6 +47,4 @@ LinearEquationSystem* LinearEquationSystemFactory::Create(int n)
 
 		matrix[row][column] = freeTerm;
 	}
-
-	return system;
 }

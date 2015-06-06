@@ -2,9 +2,13 @@
 
 MPIRowType::MPIRowType(int n)
 {
-	Size = n + 1;
+	int elementsCount = n + 1;
+	int buffer = (elementsCount % K == 0) ? 0 : (K - elementsCount % K);
 
-	MPI_Type_contiguous(Size, MPI_NUMBER, &Type);
+	ElementsCount = elementsCount + buffer;
+	Size = ElementsCount * sizeof(NUMBER);
+
+	MPI_Type_contiguous(ElementsCount, MPI_NUMBER, &Type);
 	MPI_Type_commit(&Type);
 }
 

@@ -1,17 +1,17 @@
 #pragma once
-#include <stdlib.h>
-#include "Common.h"
+#include "MPIRowType.h"
+#include "intrin.h"
 
 class LinearEquationSystem
 {
 public:
+	MPIRowType* RowType;
 	NUMBER** AugmentedMatrix;
 	int N;
 	int RowsCount;
 	int ColumnsCount;
 	int FreeTermIndex;
 
-public:
 	LinearEquationSystem(int n);
 	LinearEquationSystem(int n, int rowsCount);
 	~LinearEquationSystem();

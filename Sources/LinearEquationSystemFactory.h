@@ -1,10 +1,18 @@
 #pragma once
+#include "MPIContext.h"
+#include "MPICommunicator.h"
+#include "LinearEquationSystem.h"
 #include <time.h>
 #include <windows.h>
-#include "LinearEquationSystem.h"
 
 class LinearEquationSystemFactory
 {
+	MPIContext* context;
+	MPICommunicator* communicator;
+
 public:
-	LinearEquationSystem* Create(int n);
+	LinearEquationSystemFactory(MPIContext* mpiContext, MPICommunicator* mpiCommunicator);
+	
+    LinearEquationSystem* Create(int n);
+	void Fill(LinearEquationSystem* system);
 };

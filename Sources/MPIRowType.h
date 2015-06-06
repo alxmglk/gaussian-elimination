@@ -5,6 +5,7 @@
 class MPIRowType
 {
 public:
+	int ElementsCount;
 	int Size;
 	MPI_Datatype Type;
 
