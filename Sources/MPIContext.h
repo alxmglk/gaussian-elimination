@@ -8,7 +8,7 @@ public:
 	int NumberOfProcesses;
 	int MasterProcessRank;
 
-	MPIContext(int argc, char* argv[]);
+	MPIContext(int* argc, char*** argv);
 	~MPIContext();
 
 	bool IsMaster();
