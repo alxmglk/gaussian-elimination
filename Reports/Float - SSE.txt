@@ -1,7 +1,0 @@
-N = 32, Elapsed seconds: 0.000009
-N = 64, Elapsed seconds: 0.000043
-N = 128, Elapsed seconds: 0.000349
-N = 256, Elapsed seconds: 0.002103
-N = 512, Elapsed seconds: 0.019489
-N = 1024, Elapsed seconds: 0.171753
-N = 2048, Elapsed seconds: 2.297570
