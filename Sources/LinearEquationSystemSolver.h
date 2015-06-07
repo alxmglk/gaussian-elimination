@@ -17,7 +17,7 @@ class LinearEquationSystemSolver
 
 	void ConvertToTriangularForm(LinearEquationSystemSolverContext& solverContext);
 	void FindMainRow(LinearEquationSystemSolverContext& solverContext, int index);
-	void Backsolve(LinearEquationSystem* system, NUMBER* solution);
+	void Backsolve(LinearEquationSystemSolverContext& solverContext, NUMBER* solution);
 
 public:
 	LinearEquationSystemSolver(MPIContext& mpiContext, MPICommunicator& mpiCommunicator);

@@ -10,7 +10,7 @@ void LinearEquationSystemSolver::Solve(LinearEquationSystem* system, NUMBER* sol
 	LinearEquationSystemSolverContext solverContext(context, system);
 
 	ConvertToTriangularForm(solverContext);
-	Backsolve(system, solution);
+	Backsolve(solverContext, solution);
 }
 
 void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystemSolverContext& solverContext)
@@ -111,25 +111,33 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 	communicator.Broadcast(mainRow, 1, rowType, context.MasterProcessRank);
 }
 
-void LinearEquationSystemSolver::Backsolve(LinearEquationSystem* system, NUMBER* solution)
+void LinearEquationSystemSolver::Backsolve(LinearEquationSystemSolverContext& solverContext, NUMBER* solution)
 {
-	int lastRowIndex = system->RowsCount - 1;
+	LinearEquationSystem* system = solverContext.System;
 	int freeTermIndex = system->FreeTermIndex;
-	NUMBER** matrix = system->AugmentedMatrix;
+	int lastRowIndex = system->N - 1;	
 
 	int rowIndex = lastRowIndex;
-	NUMBER* row = matrix[lastRowIndex];
 
-	for (; rowIndex >= 0; --rowIndex, row = matrix[rowIndex])
+	for (; rowIndex >= 0; --rowIndex)
 	{
-		NUMBER freeTerm = row[freeTermIndex];
-		int columnIndex = lastRowIndex;
+		GlobalRowId mainRowId = solverContext.MainRows[rowIndex];
 
-		for (; columnIndex > rowIndex; --columnIndex)
+		if (mainRowId.ProcessRank == context.ProcessRank)
 		{
-			freeTerm -= solution[columnIndex] * row[columnIndex];
+			NUMBER* row = system->AugmentedMatrix[mainRowId.LocalIndex];
+
+			NUMBER freeTerm = row[freeTermIndex];
+			int columnIndex = lastRowIndex;
+
+			for (; columnIndex > rowIndex; --columnIndex)
+			{
+				freeTerm -= solution[columnIndex] * row[columnIndex];
+			}
+
+			solution[rowIndex] = freeTerm / row[columnIndex];
 		}
 
-		solution[rowIndex] = freeTerm / row[columnIndex];
+		communicator.Broadcast(&solution[rowIndex], 1, MPI_NUMBER, mainRowId.ProcessRank);
 	}
 }
