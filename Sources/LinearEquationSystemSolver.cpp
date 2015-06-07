@@ -23,7 +23,7 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystemSol
 
 	NUMBER** matrix = system->AugmentedMatrix;
 
-	for (int i = 0; i < system->N - 1; ++i)
+	for (int i = 0; i < system->N; ++i)
 	{
 		FindMainRow(solverContext, i);
 
@@ -58,9 +58,10 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 	bool* processedRows = solverContext.ProcessedRows;
 	NUMBER** gatherBuffer = solverContext.GatherBuffer;
 	NUMBER* mainRow = solverContext.MainRow;
+	GlobalRowId* solutionMap = solverContext.SolutionMap;
 
-	NUMBER* mainLocalRow = solverContext.DefaultMinimalRow;
-	int mainLocalRowIndex = -1;
+	NUMBER* mainRowLocal = solverContext.DefaultMinimalRow;
+	int mainRowLocalIndex = -1;
 
 	for (int row = 0; row < rowsCount; ++row)
 	{
@@ -69,19 +70,19 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 			continue;
 		}
 
-		if (mainLocalRow[index] <= matrix[row][index])
+		if (mainRowLocal[index] <= matrix[row][index])
 		{
-			mainLocalRow = matrix[row];
-			mainLocalRowIndex = row;
+			mainRowLocal = matrix[row];
+			mainRowLocalIndex = row;
 		}
 	}
 
-	communicator.Gather(mainLocalRow, 1, gatherBuffer[0], rowType);
+	communicator.Gather(mainRowLocal, 1, gatherBuffer[0], rowType);
 
-	int maxValueProc = 0;
+	int mainRowProcessRank = 0;
 	if (context.IsMaster())
 	{
-		NUMBER maxValue = gatherBuffer[maxValueProc][index];
+		NUMBER maxValue = gatherBuffer[mainRowProcessRank][index];
 
 		for (int proc = 1; proc < context.NumberOfProcesses; ++proc)
 		{
@@ -89,19 +90,26 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 
 			if (value > maxValue)
 			{
-				maxValueProc = proc;
+				mainRowProcessRank = proc;
 				maxValue = value;
 			}
 		}
 
-		memcpy(mainRow, gatherBuffer[maxValueProc], columnsCount * sizeof(NUMBER));
+		memcpy(mainRow, gatherBuffer[mainRowProcessRank], columnsCount * sizeof(NUMBER));
 	}
 
-	communicator.Broadcast(&maxValueProc, 1, MPI_INTEGER, context.MasterProcessRank);
-	if (maxValueProc == context.ProcessRank)
+	communicator.Broadcast(&mainRowProcessRank, 1, MPI_INTEGER, context.MasterProcessRank);
+	if (mainRowProcessRank == context.ProcessRank)
 	{
-		processedRows[mainLocalRowIndex] = true;
+		processedRows[mainRowLocalIndex] = true;
+
+		solutionMap[index].ProcessRank = mainRowProcessRank;
+		solutionMap[index].LocalIndex = mainRowLocalIndex;
 	}
+
+	communicator.Broadcast(&solutionMap[index], 1, solverContext.GlobalRowIdType, mainRowProcessRank);
+
+	printf("Solution map[%d]: %d + local index: %d \n", index, solutionMap[index].ProcessRank, solutionMap[index].LocalIndex);
 
 	communicator.Broadcast(mainRow, 1, rowType, context.MasterProcessRank);
 }
