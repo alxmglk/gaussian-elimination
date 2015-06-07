@@ -24,7 +24,7 @@ LinearEquationSystemSolverContext::LinearEquationSystemSolverContext(MPIContext&
 	GlobalRowIdType = _globalRowIdType->Type;
 
 	MainRow = (NUMBER*)_aligned_malloc(system->RowType->Size, 16);
-	SolutionMap = new GlobalRowId[system->N];
+	MainRows = new GlobalRowId[system->N];
 }
 
 LinearEquationSystemSolverContext::~LinearEquationSystemSolverContext()
@@ -32,7 +32,7 @@ LinearEquationSystemSolverContext::~LinearEquationSystemSolverContext()
 	_aligned_free(MainRow);
 	delete[]DefaultMinimalRow;
 	delete[]ProcessedRows;
-	delete[]SolutionMap;
+	delete[]MainRows;
 	delete _gatherBuffer;
 	delete _globalRowIdType;
 }

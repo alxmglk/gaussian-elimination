@@ -17,7 +17,7 @@ public:
 	NUMBER* DefaultMinimalRow;
 	NUMBER** GatherBuffer;
 	bool* ProcessedRows;
-	GlobalRowId* SolutionMap;
+	GlobalRowId* MainRows;
 	MPI_Datatype GlobalRowIdType;
 
 	LinearEquationSystemSolverContext(MPIContext& mpiContext, LinearEquationSystem* system);

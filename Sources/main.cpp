@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 			//print(partialSystem);
 
 			delete partialSystem;
-			delete solution;
+			delete []solution;
 		}
 
 		printf("N = %d, Elapsed seconds: %f\n", n, minTime);

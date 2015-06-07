@@ -58,7 +58,7 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 	bool* processedRows = solverContext.ProcessedRows;
 	NUMBER** gatherBuffer = solverContext.GatherBuffer;
 	NUMBER* mainRow = solverContext.MainRow;
-	GlobalRowId* solutionMap = solverContext.SolutionMap;
+	GlobalRowId* mainRows = solverContext.MainRows;
 
 	NUMBER* mainRowLocal = solverContext.DefaultMinimalRow;
 	int mainRowLocalIndex = -1;
@@ -103,14 +103,11 @@ void LinearEquationSystemSolver::FindMainRow(LinearEquationSystemSolverContext& 
 	{
 		processedRows[mainRowLocalIndex] = true;
 
-		solutionMap[index].ProcessRank = mainRowProcessRank;
-		solutionMap[index].LocalIndex = mainRowLocalIndex;
+		mainRows[index].ProcessRank = mainRowProcessRank;
+		mainRows[index].LocalIndex = mainRowLocalIndex;
 	}
 
-	communicator.Broadcast(&solutionMap[index], 1, solverContext.GlobalRowIdType, mainRowProcessRank);
-
-	printf("Solution map[%d]: %d + local index: %d \n", index, solutionMap[index].ProcessRank, solutionMap[index].LocalIndex);
-
+	communicator.Broadcast(&mainRows[index], 1, solverContext.GlobalRowIdType, mainRowProcessRank);
 	communicator.Broadcast(mainRow, 1, rowType, context.MasterProcessRank);
 }
 
