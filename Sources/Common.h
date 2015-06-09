@@ -1,7 +1,7 @@
-typedef float NUMBER;
+typedef double NUMBER;
 
-#define PARRAY __m128
-#define SET1 _mm_set1_ps
-#define ADD _mm_add_ps
-#define MUL _mm_mul_ps
-#define K 4
+#define PARRAY __m128d
+#define SET1 _mm_set1_pd
+#define ADD _mm_add_pd
+#define MUL _mm_mul_pd
+#define K 2
