@@ -9,9 +9,9 @@ public:
 	int N;
 	int RowsCount;
 	int ColumnsCount;
+	int ColumnsCountWithBuffer;
 	int FreeTermIndex;
 
-public:
 	LinearEquationSystem(int n);
 	~LinearEquationSystem();
 };
