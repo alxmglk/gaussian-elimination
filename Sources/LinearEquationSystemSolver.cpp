@@ -36,13 +36,17 @@ void LinearEquationSystemSolver::ConvertToTriangularForm(LinearEquationSystem* s
 			}
 		}
 
-		for (int i = row + 1; i < rowsCount; ++i)
+		#pragma omp parallel num_threads(8) if (rowsCount - row > 128) 
 		{
-			NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
-
-			for (int j = 0; j < columnsCount; ++j)
+			#pragma omp for nowait
+			for (int i = row + 1; i < rowsCount; ++i)
 			{
-				matrix[i][j] += matrix[row][j] * multiplier;
+				NUMBER multiplier = -(matrix[i][column] / matrix[row][column]);
+
+				for (int j = 0; j < columnsCount; ++j)
+				{
+					matrix[i][j] += matrix[row][j] * multiplier;
+				}
 			}
 		}
 	}
