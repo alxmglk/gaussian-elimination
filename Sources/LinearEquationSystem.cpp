@@ -8,9 +8,12 @@ LinearEquationSystem::LinearEquationSystem(int n)
 	FreeTermIndex = n;
 	AugmentedMatrix = (NUMBER**)malloc(RowsCount * sizeof(NUMBER*));
 
+	int buffer = (ColumnsCount % K == 0) ? 0 : (K - ColumnsCount % K);
+	ColumnsCountWithBuffer = (ColumnsCount + buffer);
+
 	for (int row = 0; row < RowsCount; ++row)
 	{
-		AugmentedMatrix[row] = (NUMBER*)_aligned_malloc(ColumnsCount * sizeof(NUMBER), 16);
+		AugmentedMatrix[row] = (NUMBER*)_aligned_malloc(ColumnsCountWithBuffer * sizeof(NUMBER), 16);
 	}
 }
 
