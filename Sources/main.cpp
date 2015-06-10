@@ -45,12 +45,14 @@ int main(int argc, char* argv[])
 
 			communicator.Barrier();
 			
-			//print(partialSystem);
-
 			delete partialSystem;
 			delete []solution;
 		}
+				
+		if (context.IsMaster())
+		{
+			printf("N = %d, Elapsed seconds: %f\n", n, minTime);
+		}
 
-		printf("N = %d, Elapsed seconds: %f\n", n, minTime);
 	}
 }
